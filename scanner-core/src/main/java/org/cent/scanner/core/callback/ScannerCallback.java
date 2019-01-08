@@ -6,7 +6,7 @@ import java.util.List;
  * @author: cent
  * @email: 292462859@qq.com
  * @date: 2019/1/7.
- * @description:
+ * @description: Callback函数接口
  */
 public interface ScannerCallback {
 
