@@ -1,0 +1,14 @@
+ext {
+
+    junitVersion = '4.11'
+    lombokVersion = '1.18.4'
+    slf4jVersion = '1.7.25'
+
+
+    dependencies = [
+            "lombok": "org.projectlombok:lombok:${lombokVersion}",
+            "junit" : "junit:junit:${junitVersion}",
+            "slf4j-api":"org.slf4j:slf4j-api:${slf4jVersion}",
+            "slf4j-simple":"org.slf4j:slf4j-simple:${slf4jVersion}"
+    ]
+}
