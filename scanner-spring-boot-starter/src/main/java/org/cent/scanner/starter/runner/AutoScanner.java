@@ -26,28 +26,44 @@ public class AutoScanner implements ApplicationRunner {
     private ClassScanner classScanner;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
+        //未启用自动扫描，返回
         if (!scannerProp.isEnable()) {
             return;
         }
 
+        //没有需要扫描的包，返回
         if (EmptyUtil.isEmpty(scannerProp.getPackages())) {
             return;
         }
 
+        //回调函数为空，返回
         if (EmptyUtil.isEmpty(scannerProp.getCallback())) {
             return;
         }
 
+        //获取配置注解类
         Class<Annotation> anno = null;
         if (EmptyUtil.isNotEmpty(scannerProp.getAnnotation())) {
-            anno = (Class) Thread.currentThread().getContextClassLoader()
-                    .loadClass(scannerProp.getAnnotation());
+            try {
+                anno = (Class) Thread.currentThread().getContextClassLoader().loadClass(scannerProp.getAnnotation());
+            } catch (ClassNotFoundException e) {
+                log.error("[class-scanner]load annotation error", e);
+                return;
+            }
         }
 
-        ScannerCallback callback = (ScannerCallback) Thread.currentThread().getContextClassLoader()
-                .loadClass(scannerProp.getCallback()).newInstance();
+        //获取配置的回调类实例
+        ScannerCallback callback = null;
+        try {
+            callback = (ScannerCallback) Thread.currentThread().getContextClassLoader()
+                    .loadClass(scannerProp.getCallback()).newInstance();
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            log.error("[class-scanner]load callback error", e);
+            return;
+        }
 
+        //执行扫描
         if (anno == null) {
             classScanner.scanAndCallback(scannerProp.getPackages(), callback);
         } else {
