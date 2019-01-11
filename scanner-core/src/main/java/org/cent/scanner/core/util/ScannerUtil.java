@@ -181,7 +181,7 @@ public enum ScannerUtil {
                     Class clz = Thread.currentThread().getContextClassLoader().loadClass(className);
                     classList.add(clz);
                 } catch (ClassNotFoundException | LinkageError e) {
-                    log.warn("can load class:{}", name);
+                    log.debug("can load class:{}", name);
                 }
             }
         }

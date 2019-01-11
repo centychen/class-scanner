@@ -1,4 +1,5 @@
 rootProject.name = 'class-scanner'
 include 'scanner-core'
 include 'scanner-spring-boot-starter'
+include 'class-scanner-example'
 

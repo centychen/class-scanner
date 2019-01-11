@@ -63,7 +63,12 @@ public class DefaultClassScanner implements ClassScanner {
         //根据Annotation过滤并返回
         return classList.parallelStream()
                 .filter(clz -> {
-                    if (clz.getAnnotation(anno) == null) {
+                    try {
+                        if (clz.getAnnotation(anno) == null) {
+                            return false;
+                        }
+                    } catch (Throwable e) {
+                        log.debug(e.getMessage());
                         return false;
                     }
                     return true;

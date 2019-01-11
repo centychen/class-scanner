@@ -1,6 +1,6 @@
 dependencies {
     compile rootProject.ext.dependencies["lombok"]
     compile rootProject.ext.dependencies["slf4j-api"]
-    compile rootProject.ext.dependencies["slf4j-simple"]
+    testCompile rootProject.ext.dependencies["slf4j-simple"]
     testCompile rootProject.ext.dependencies["junit"]
 }
