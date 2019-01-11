@@ -1,0 +1,9 @@
+org:
+  scanner:
+    auto:
+      enable: true
+      annotation: org.cent.scanner.core.anno.Scannable
+      callback: org.cent.scanner.example.Callback
+      packages:
+        - org
+        - lombok
