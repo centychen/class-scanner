@@ -4,7 +4,7 @@ package org.cent.scanner.core.util;
  * @author: cent
  * @email: 292462859@qq.com
  * @date: 2019/1/7.
- * @description:
+ * @description: 空判断相关工具方法
  */
 public enum EmptyUtil {
     ;

@@ -1,5 +1,6 @@
 package org.cent.scanner.core.util;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.cent.scanner.core.consts.CommonConsts;
 import org.cent.scanner.core.consts.ProtocolTypes;
@@ -13,6 +14,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -24,7 +26,7 @@ import static org.cent.scanner.core.consts.CommonConsts.PATH_SEPARATOR;
  * @author: cent
  * @email: 292462859@qq.com
  * @date: 2019/1/8.
- * @description:
+ * @description: 扫描工具类，实现文件相关扫描方法
  */
 @Slf4j
 public enum ScannerUtil {
@@ -45,7 +47,7 @@ public enum ScannerUtil {
             Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(pathName);
             //循环扫描路径
             classList = scanUrls(pkg, urls);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("扫描包路径出错：{}", pkg, e);
         }
 
@@ -60,24 +62,33 @@ public enum ScannerUtil {
      * @return Class列表
      * @throws IOException
      */
-    private static List<Class> scanUrls(String pkg, Enumeration<URL> urls) throws IOException {
+    private static List<Class> scanUrls(String pkg, Enumeration<URL> urls) {
         List<Class> classList = new LinkedList<>();
+
+        //Enumeration转list
+        List<URL> urlList = new LinkedList<>();
         while (urls.hasMoreElements()) {
-            URL url = urls.nextElement();
-            //获取协议
-            String protocol = url.getProtocol();
-
-            if (ProtocolTypes.file.name().equals(protocol)) {
-                //文件
-                String path = URLDecoder.decode(url.getFile(), CommonConsts.DEFAULT_CHARSET);
-                classList.addAll(recursiveScan4Path(pkg, path));
-
-            } else if (ProtocolTypes.jar.name().equals(protocol)) {
-                //jar包
-                String jarPath = URLUtil.getJarPathFormUrl(url);
-                classList.addAll(recursiveScan4Jar(pkg, jarPath));
-            }
+            urlList.add(urls.nextElement());
         }
+
+        //创建异步任务
+        List<FutureTask<List<Class>>> tasks = new LinkedList<>();
+        urlList.forEach(url -> {
+            URLScanCallable call = new URLScanCallable(pkg, url);
+            FutureTask<List<Class>> task = new FutureTask<>(call);
+            ExecutorUtil.executeInPool(new Thread(task));
+            tasks.add(task);
+        });
+
+        //等待并处理返回结果
+        tasks.parallelStream().forEach(task -> {
+            try {
+                classList.addAll(task.get());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        });
+
         return classList;
     }
 
@@ -91,6 +102,7 @@ public enum ScannerUtil {
     private static List<Class> recursiveScan4Path(String pkg, String filePath) {
         List<Class> classList = new LinkedList<>();
 
+        //读取文件
         File file = new File(filePath);
         if (!file.exists() || !file.isDirectory()) {
             return classList;
@@ -100,8 +112,7 @@ public enum ScannerUtil {
         File[] classes = file.listFiles(child -> ClassUtil.isClass(child.getName()));
         Arrays.asList(classes).forEach(child -> {
             String className = ClassUtil.classFile2SimpleClass(
-                    new StringBuilder()
-                            .append(pkg).append(PACKAGE_SEPARATOR).append(child.getName()).toString()
+                    new StringBuilder().append(pkg).append(PACKAGE_SEPARATOR).append(child.getName()).toString()
             );
 
             try {
@@ -144,23 +155,29 @@ public enum ScannerUtil {
     private static List<Class> recursiveScan4Jar(String pkg, String jarPath) throws IOException {
         List<Class> classList = new LinkedList<>();
 
+        //读取Jar文件
         JarInputStream jin = new JarInputStream(new FileInputStream(jarPath));
         JarEntry entry = jin.getNextJarEntry();
         while (entry != null) {
             String name = entry.getName();
             entry = jin.getNextJarEntry();
 
+            //包名不匹配，跳过
             if (!name.contains(ClassUtil.package2Path(pkg))) {
                 continue;
             }
+
+            //判断是否类文件
             if (ClassUtil.isClass(name)) {
                 if (ClassUtil.isAnonymousInnerClass(name)) {
-                    //是匿名内部类，跳过不作处理
+                    //是匿名内部类，跳过
                     continue;
                 }
 
+                //文件名转类名
                 String className = ClassUtil.classFile2SimpleClass(ClassUtil.path2Package(name));
                 try {
+                    //加载类文件
                     Class clz = Thread.currentThread().getContextClassLoader().loadClass(className);
                     classList.add(clz);
                 } catch (ClassNotFoundException | LinkageError e) {
@@ -170,5 +187,46 @@ public enum ScannerUtil {
         }
 
         return classList;
+    }
+
+    /**
+     * URL扫描线程类
+     */
+    @AllArgsConstructor
+    @Slf4j
+    static class URLScanCallable implements Callable<List<Class>> {
+
+        /**
+         * 需匹配的包名
+         */
+        private String pkg;
+        /**
+         * 需扫描的URL
+         */
+        private URL url;
+
+        @Override
+        public List<Class> call() {
+            //获取协议
+            String protocol = url.getProtocol();
+
+            List<Class> classList = new LinkedList<>();
+            try {
+                if (ProtocolTypes.file.name().equals(protocol)) {
+                    //文件
+                    String path = URLDecoder.decode(url.getFile(), CommonConsts.DEFAULT_CHARSET);
+                    classList.addAll(recursiveScan4Path(pkg, path));
+
+                } else if (ProtocolTypes.jar.name().equals(protocol)) {
+                    //jar包
+                    String jarPath = URLUtil.getJarPathFormUrl(url);
+                    classList.addAll(recursiveScan4Jar(pkg, jarPath));
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+
+            return classList;
+        }
     }
 }
