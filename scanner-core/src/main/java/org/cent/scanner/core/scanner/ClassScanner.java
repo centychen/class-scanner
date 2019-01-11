@@ -1,6 +1,5 @@
 package org.cent.scanner.core.scanner;
 
-import org.cent.scanner.core.anno.Scannable;
 import org.cent.scanner.core.callback.ScannerCallback;
 
 import java.lang.annotation.Annotation;
@@ -20,31 +19,31 @@ public interface ClassScanner {
      * @param scanBasePackages
      * @return
      */
-    List<Class> scan(String... scanBasePackages);
+    List<Class> scan(List<String> scanBasePackages);
 
     /**
      * 扫描某个包下带有注解的Class
      *
-     * @param anno
      * @param scanBasePackages
+     * @param anno
      * @return
      */
-    List<Class> scanByAnno(Class<? extends Annotation> anno, String... scanBasePackages);
+    List<Class> scanByAnno(List<String> scanBasePackages, Class<? extends Annotation> anno);
 
     /**
      * 扫描某个包下的Class，并执行回调
      *
-     * @param callback
      * @param scanBasePackages
+     * @param callback
      */
-    void scanAndCallback(ScannerCallback callback, String... scanBasePackages);
+    void scanAndCallback(List<String> scanBasePackages, ScannerCallback callback);
 
     /**
      * 扫描某个包下特定注解的Class，并执行回调
      *
+     * @param scanBasePackages
      * @param anno
      * @param callback
-     * @param scanBasePackages
      */
-    void scanAndCallbackByAnno(ScannerCallback callback, Class<? extends Annotation> anno, String... scanBasePackages);
+    void scanAndCallbackByAnno(List<String> scanBasePackages, Class<? extends Annotation> anno, ScannerCallback callback);
 }

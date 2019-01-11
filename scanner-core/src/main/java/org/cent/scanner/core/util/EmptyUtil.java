@@ -1,5 +1,7 @@
 package org.cent.scanner.core.util;
 
+import java.util.Collection;
+
 /**
  * @author: cent
  * @email: 292462859@qq.com
@@ -32,5 +34,20 @@ public enum EmptyUtil {
      */
     public static boolean isNotEmpty(String str) {
         return !isEmpty(str);
+    }
+
+    /**
+     * 列表判空
+     *
+     * @param collection
+     * @return
+     */
+    public static boolean isEmpty(Collection collection) {
+        if (collection == null) {
+            return true;
+        } else if (collection.size() == 0) {
+            return true;
+        }
+        return false;
     }
 }

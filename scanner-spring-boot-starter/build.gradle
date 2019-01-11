@@ -1,4 +1,7 @@
 dependencies {
     testCompile rootProject.ext.dependencies["junit"]
     compile rootProject.ext.dependencies["lombok"]
+    compile rootProject.ext.dependencies["spring-boot-autoconfigure"]
+    compile rootProject.ext.dependencies["spring-boot-configuration-processor"]
+    compile project (":scanner-core")
 }

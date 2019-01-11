@@ -11,11 +11,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author: cent
- * @email: chenzhao@viomi.com.cn
+ * @email: 292462859@qq.com
  * @date: 2019/1/8.
  * @description:
  */
@@ -24,10 +25,9 @@ import java.util.List;
 @Slf4j
 public class ClassScannerTestCase {
 
-    private final String scanPkg1 = "org";
-    private final String scanPkg2 = "lombok";
-    private final String scanPkg3 = "com.sun";
-    private final String scanPkg4 = "javax";
+    private final List<String> scanPkgs = Arrays.asList(
+            "org", "lombok", "com.sun", "javax"
+    );
     private ClassScanner classScanner = new DefaultClassScanner();
 
     /**
@@ -35,7 +35,7 @@ public class ClassScannerTestCase {
      */
     @Test
     public void testScan() {
-        List<Class> classList = classScanner.scan(scanPkg1, scanPkg2, scanPkg3, scanPkg4);
+        List<Class> classList = classScanner.scan(scanPkgs);
         Assert.that(classList.size() > 0, "扫描失败，返回为空！");
         log.info("共扫描到{}个类", classList.size());
     }
@@ -45,7 +45,7 @@ public class ClassScannerTestCase {
      */
     @Test
     public void testScanByAnno() {
-        List<Class> classList = classScanner.scanByAnno(Scannable.class, scanPkg1, scanPkg2);
+        List<Class> classList = classScanner.scanByAnno(scanPkgs, Scannable.class);
         Assert.that(classList.size() > 0, "扫描失败，返回为空！");
         log.info("共扫描到{}个类", classList.size());
     }
@@ -55,7 +55,7 @@ public class ClassScannerTestCase {
      */
     @Test
     public void testScanAndCallback() {
-        classScanner.scanAndCallback(new TestCallback(), scanPkg1, scanPkg2);
+        classScanner.scanAndCallback(scanPkgs, new TestCallback());
     }
 
     /**
@@ -63,7 +63,7 @@ public class ClassScannerTestCase {
      */
     @Test
     public void testScanAndCallbackByAnno() {
-        classScanner.scanAndCallbackByAnno(new TestCallback(), CustomScannable.class, scanPkg1, scanPkg2);
+        classScanner.scanAndCallbackByAnno(scanPkgs, CustomScannable.class, new TestCallback());
     }
 
 

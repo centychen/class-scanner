@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.cent.scanner.core.callback.ScannerCallback;
 import org.cent.scanner.core.scanner.ClassScanner;
+import org.cent.scanner.core.util.EmptyUtil;
 import org.cent.scanner.core.util.ExecutorUtil;
 import org.cent.scanner.core.util.ScannerUtil;
 
@@ -24,17 +25,17 @@ import java.util.stream.Collectors;
 public class DefaultClassScanner implements ClassScanner {
 
     @Override
-    public List<Class> scan(String... scanBasePackages) {
+    public List<Class> scan(List<String> scanBasePackages) {
         List<Class> classList = new LinkedList<>();
 
         //没有需要扫描的包，返回空列表
-        if (scanBasePackages.length == 0) {
+        if (EmptyUtil.isEmpty(scanBasePackages)) {
             return classList;
         }
 
         //创建异步线程
         List<FutureTask<List<Class>>> tasks = new LinkedList<>();
-        Arrays.asList(scanBasePackages)
+        scanBasePackages
                 .forEach(pkg -> {
                     ScannerCallable call = new ScannerCallable(pkg);
                     FutureTask<List<Class>> task = new FutureTask(call);
@@ -56,7 +57,7 @@ public class DefaultClassScanner implements ClassScanner {
     }
 
     @Override
-    public List<Class> scanByAnno(Class<? extends Annotation> anno, String... scanBasePackages) {
+    public List<Class> scanByAnno(List<String> scanBasePackages, Class<? extends Annotation> anno) {
         List<Class> classList = this.scan(scanBasePackages);
 
         //根据Annotation过滤并返回
@@ -71,14 +72,16 @@ public class DefaultClassScanner implements ClassScanner {
     }
 
     @Override
-    public void scanAndCallback(ScannerCallback callback, String... scanBasePackages) {
+    public void scanAndCallback(List<String> scanBasePackages, ScannerCallback callback) {
         List<Class> classList = this.scan(scanBasePackages);
         callback.callback(classList);
     }
 
     @Override
-    public void scanAndCallbackByAnno(ScannerCallback callback, Class<? extends Annotation> anno, String... scanBasePackages) {
-        List<Class> classList = this.scanByAnno(anno, scanBasePackages);
+    public void scanAndCallbackByAnno(List<String> scanBasePackages,
+                                      Class<? extends Annotation> anno,
+                                      ScannerCallback callback) {
+        List<Class> classList = this.scanByAnno(scanBasePackages, anno);
         callback.callback(classList);
     }
 
