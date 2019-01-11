@@ -1,8 +1,6 @@
 package org.cent.scanner.core.util;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author: cent
@@ -19,7 +17,8 @@ public enum ExecutorUtil {
             16,
             3,
             TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(10000));
+            new LinkedBlockingQueue<>(10000),
+            new NamedThreadFactory("class-scanner-thread-"));
 
     /**
      * 在线程池执行线程

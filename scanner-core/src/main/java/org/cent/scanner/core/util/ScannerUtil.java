@@ -74,7 +74,7 @@ public enum ScannerUtil {
         //创建异步任务
         List<FutureTask<List<Class>>> tasks = new LinkedList<>();
         urlList.forEach(url -> {
-            URLScanCallable call = new URLScanCallable(pkg, url);
+            UrlScanCallable call = new UrlScanCallable(pkg, url);
             FutureTask<List<Class>> task = new FutureTask<>(call);
             ExecutorUtil.executeInPool(new Thread(task));
             tasks.add(task);
@@ -194,7 +194,7 @@ public enum ScannerUtil {
      */
     @AllArgsConstructor
     @Slf4j
-    static class URLScanCallable implements Callable<List<Class>> {
+    static class UrlScanCallable implements Callable<List<Class>> {
 
         /**
          * 需匹配的包名
