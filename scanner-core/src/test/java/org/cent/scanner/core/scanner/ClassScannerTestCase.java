@@ -21,44 +21,67 @@ import java.util.List;
  */
 @Scannable
 @ClassScannerTestCase.CustomScannable
+@Slf4j
 public class ClassScannerTestCase {
 
     private final String scanPkg1 = "org";
     private final String scanPkg2 = "lombok";
+    private final String scanPkg3 = "com.sun";
+    private final String scanPkg4 = "javax";
     private ClassScanner classScanner = new DefaultClassScanner();
 
+    /**
+     * 测试用例：扫描多个包
+     */
     @Test
     public void testScan() {
-        List<Class> classList = classScanner.scan(scanPkg1,scanPkg2);
+        List<Class> classList = classScanner.scan(scanPkg1, scanPkg2, scanPkg3, scanPkg4);
         Assert.that(classList.size() > 0, "扫描失败，返回为空！");
+        log.info("共扫描到{}个类", classList.size());
     }
 
+    /**
+     * 测试用例：扫描多个包下带有Scannable注解的类
+     */
     @Test
     public void testScanByAnno() {
-        List<Class> classList = classScanner.scanByAnno(CustomScannable.class, scanPkg1,scanPkg2);
+        List<Class> classList = classScanner.scanByAnno(Scannable.class, scanPkg1, scanPkg2);
         Assert.that(classList.size() > 0, "扫描失败，返回为空！");
+        log.info("共扫描到{}个类", classList.size());
     }
 
+    /**
+     * 测试用例：扫描多个包并执行callback方法
+     */
     @Test
     public void testScanAndCallback() {
-        classScanner.scanAndCallback(new TestCallback(), scanPkg1,scanPkg2);
+        classScanner.scanAndCallback(new TestCallback(), scanPkg1, scanPkg2);
     }
 
+    /**
+     * 测试用例：扫描多个包带有CustomScannable注解的类，并执行callback。
+     */
     @Test
     public void testScanAndCallbackByAnno() {
-        classScanner.scanAndCallbackByAnno(new TestCallback(),CustomScannable.class, scanPkg1,scanPkg2);
+        classScanner.scanAndCallbackByAnno(new TestCallback(), CustomScannable.class, scanPkg1, scanPkg2);
     }
 
 
+    /**
+     * callback方法
+     */
     @Slf4j
     static class TestCallback implements ScannerCallback {
         @Override
         public void callback(List<Class> clzs) {
             clzs.forEach(clz -> log.info(clz.getName()));
-            Assert.that(clzs.size()>0, "扫描结果数量错误！");
+            Assert.that(clzs.size() > 0, "扫描结果数量错误！");
         }
     }
 
+    /**
+     * 自定义注解
+     */
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
     static @interface CustomScannable {
