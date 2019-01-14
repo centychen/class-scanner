@@ -1,5 +1,8 @@
 ext {
 
+    // maven本地路径
+    localMavenRepo = 'file://' + new File(System.getProperty('user.home'), 'maven-repo/maven').absolutePath
+
     junitVersion = '4.11'
     lombokVersion = '1.18.4'
     slf4jVersion = '1.7.25'

@@ -2,5 +2,5 @@ dependencies {
     testCompile rootProject.ext.dependencies["junit"]
     compile rootProject.ext.dependencies["spring-boot-starter-test"]
     compile rootProject.ext.dependencies["spring-boot-starter-web"]
-    compile project(":scanner-spring-boot-starter")
+    compile "org.cent:scanner-spring-boot-starter:${version}"
 }

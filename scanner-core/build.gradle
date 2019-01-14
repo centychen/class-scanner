@@ -5,14 +5,11 @@ dependencies {
     testCompile rootProject.ext.dependencies["junit"]
 }
 
-// 指定上传的路径
-def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), 'maven-repo/maven').absolutePath
-
-// 上传Task，Gradle会生成并上传pom.xml文件。
+// 上传Task。
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: localMavenRepo)
+            repository(url: rootProject.ext.localMavenRepo)
 
             //构造项目的Pom文件
             pom.project {
