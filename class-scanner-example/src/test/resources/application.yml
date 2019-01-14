@@ -1,9 +1,9 @@
 org:
   scanner:
     auto:
-      enable: true
-      annotation: org.cent.scanner.core.anno.Scannable
-      callback: org.cent.scanner.example.Callback
-      packages:
+      enable: true #是否启用
+      annotation: org.cent.scanner.core.anno.Scannable #指定扫描特定注解，可为空
+      callback: org.cent.scanner.example.Callback #回调函数
+      packages: #扫描包路径，数组
         - org
         - lombok
