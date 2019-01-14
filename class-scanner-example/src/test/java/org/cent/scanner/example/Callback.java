@@ -17,6 +17,6 @@ import java.util.List;
 public class Callback implements ScannerCallback {
     @Override
     public void callback(List<Class> clzs) {
-        log.info("[class-scanner-auto-callback]scan total {} classes.", clzs.size());
+        log.info("[class-scanner-testcase-auto-callback]scan total {} classes.", clzs.size());
     }
 }
