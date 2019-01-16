@@ -34,11 +34,13 @@ public class AutoScanner implements ApplicationRunner {
 
         //没有需要扫描的包，返回
         if (EmptyUtil.isEmpty(scannerProp.getPackages())) {
+            log.warn("[class-scanner]packages not set.");
             return;
         }
 
         //回调函数为空，返回
         if (EmptyUtil.isEmpty(scannerProp.getCallback())) {
+            log.warn("[class-scanner]callback not set.");
             return;
         }
 
@@ -48,7 +50,7 @@ public class AutoScanner implements ApplicationRunner {
             try {
                 anno = (Class) Thread.currentThread().getContextClassLoader().loadClass(scannerProp.getAnnotation());
             } catch (ClassNotFoundException e) {
-                log.error("[class-scanner]load annotation error", e);
+                log.error("[class-scanner]load annotation {} error.", scannerProp.getAnnotation());
                 return;
             }
         }
@@ -59,7 +61,7 @@ public class AutoScanner implements ApplicationRunner {
             callback = (ScannerCallback) Thread.currentThread().getContextClassLoader()
                     .loadClass(scannerProp.getCallback()).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            log.error("[class-scanner]load callback error", e);
+            log.error("[class-scanner]load callback {} error.", scannerProp.getCallback());
             return;
         }
 
