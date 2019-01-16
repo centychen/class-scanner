@@ -9,10 +9,11 @@ import org.cent.scanner.core.util.ExecutorUtil;
 import org.cent.scanner.core.util.ScannerUtil;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.stream.Collectors;
 
 /**
@@ -56,6 +57,12 @@ public class DefaultClassScanner implements ClassScanner {
         return classList;
     }
 
+    /**
+     *
+     * @param scanBasePackages
+     * @param anno
+     * @return
+     */
     @Override
     public List<Class> scanByAnno(List<String> scanBasePackages, Class<? extends Annotation> anno) {
         List<Class> classList = this.scan(scanBasePackages);

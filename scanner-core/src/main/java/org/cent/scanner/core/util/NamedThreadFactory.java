@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author: cent
  * @email: chenzhao@viomi.com.cn
  * @date: 2019/1/11.
- * @description:
+ * @description: 自定义线程工厂类，增加前缀命名自定义
  */
 public class NamedThreadFactory implements ThreadFactory {
     private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);
@@ -15,6 +15,11 @@ public class NamedThreadFactory implements ThreadFactory {
     private final AtomicInteger threadNumber = new AtomicInteger(1);
     private String namePrefix;
 
+    /**
+     * 构造方法，可定义线程池前缀
+     *
+     * @param namePrefix
+     */
     public NamedThreadFactory(String namePrefix) {
         SecurityManager s = System.getSecurityManager();
         group = (s != null) ? s.getThreadGroup() :

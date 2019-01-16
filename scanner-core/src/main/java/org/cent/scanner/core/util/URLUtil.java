@@ -11,6 +11,9 @@ import java.net.URL;
 public enum URLUtil {
     ;
 
+    /**
+     * url中文件类型前缀
+     */
     public static final String JAR_URL_FILE_PREFIX = "file:";
 
     /**

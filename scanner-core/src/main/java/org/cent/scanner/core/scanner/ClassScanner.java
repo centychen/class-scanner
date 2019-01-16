@@ -14,7 +14,7 @@ import java.util.List;
 public interface ClassScanner {
 
     /**
-     * 扫描某个包下的Class
+     * 扫描多个包下的Class
      *
      * @param scanBasePackages
      * @return
@@ -22,7 +22,7 @@ public interface ClassScanner {
     List<Class> scan(List<String> scanBasePackages);
 
     /**
-     * 扫描某个包下带有注解的Class
+     * 扫描多个包下带有注解的Class
      *
      * @param scanBasePackages
      * @param anno
@@ -31,7 +31,7 @@ public interface ClassScanner {
     List<Class> scanByAnno(List<String> scanBasePackages, Class<? extends Annotation> anno);
 
     /**
-     * 扫描某个包下的Class，并执行回调
+     * 扫描多个包下的Class，并执行回调
      *
      * @param scanBasePackages
      * @param callback
@@ -39,7 +39,7 @@ public interface ClassScanner {
     void scanAndCallback(List<String> scanBasePackages, ScannerCallback callback);
 
     /**
-     * 扫描某个包下特定注解的Class，并执行回调
+     * 扫描多个包下特定注解的Class，并执行回调
      *
      * @param scanBasePackages
      * @param anno
