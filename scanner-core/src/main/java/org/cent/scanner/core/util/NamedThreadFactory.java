@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author: cent
- * @email: chenzhao@viomi.com.cn
+ * @email: 292462859@qq.com
  * @date: 2019/1/11.
  * @description: 自定义线程工厂类，增加前缀命名自定义
  */
